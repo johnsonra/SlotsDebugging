@@ -1,0 +1,12 @@
+Package: SlotMachine
+Title: Slot Machine
+Version: 0.1
+Authors@R: person("Randy", "Johnson", email = "johnson@hood.edu", role = c("aut", "cre"))
+Description: Real, working slot machine modeled after some real life Video Lottery Terminals from Manitoba, Canada.
+Depends: R (>= 3.5.0), dplyr, tidyr, purrr
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
+Suggests: 
+    testthat
