@@ -1,5 +1,5 @@
-Package: SlotMachine
-Title: Slot Machine
+Package: BuggySlots
+Title: Buggy Slot Machine
 Version: 0.1
 Authors@R: person("Randy", "Johnson", email = "johnson@hood.edu", role = c("aut", "cre"))
 Description: Real, working slot machine modeled after some real life Video Lottery Terminals from Manitoba, Canada.
