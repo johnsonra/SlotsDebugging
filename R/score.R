@@ -169,28 +169,29 @@ score3 <- function(symbols)
     mutate(symbols,
            
            # tabulate sumbols from each row
-           tab = apply(symbols, 1, table),
+           slots = apply(cbind(V1, V2, V3), 1, unique),
            
            # count diamonnds
-           diamonds = map_int(tab, ~ sum(.x['DD'], na.rm = TRUE)),
+           diamonds = (V1 == 'DD') + (V2 == 'DD') + (V3 == 'DD'),
            
            # count cherries
-           cherries = map_int(tab, ~ sum(.x['C'], na.rm = TRUE)),
+           cherries = (V1 == 'C') + (V2 == 'C') + (V3 == 'C')
            
            # are non-diamonds the same?
-           same = map_lgl(tab, ~ length(.x) == 1),
+           nonDiamonds = map(slots, ~ grep('DD', .x, invert = TRUE, value = TRUE)),
+           same = map_lgl(nonDiamonds, ~ length(.x) == 1),
            
            # are all non-diamonds bars?
-           bars = map_lgl(tab, ~ all(names(.x)[names(.x) != 'DD'] %in% c("B", "BB", "BBB"))),
+           bars = map_lgl(slots, ~ all(.x %in% c("B", "BB", "BBB"))),
            
           
            #### assign prize ####
-           prize = ifelse(diamonds == 3, payouts['DD'],                                   # prize for all diamonds
-                   ifelse(same, payouts[map_chr(tab, ~ names(.x)[names(.x) != 'DD'][1])], # prize for all the same
-                   ifelse(bars, 5,                                                        # prize for all bars
-                   ifelse(cherries > 0, c(2, 5)[cherries + diamonds],                     # prize for any cherries
-                          0))))) %>%                                                      # otherwise nothing
-           
+           prize = case_when(diamonds == 3 ~ payouts['DD'],                            # prize for all diamonds
+                             same ~ payouts[nonDiamonds],                              # prize for all the same
+                             bars ~ 5,                                                 # prize for all bars
+                             cherries > 0 ~ c(0, 2, 5, 10)[cherries + diamonds + 1],   # prize for any cherries
+                             TRUE ~ 0)) %>%                                            # otherwise nothing
+    
     # double prize for each diamond
     mutate(prize = prize * 2^diamonds) %>%
         
